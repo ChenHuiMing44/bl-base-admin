@@ -1,0 +1,1 @@
+/* eslint-disable no-empty-label */import Vue from "vue"import Vuex from "vuex"import getters from "./getters"import app from "./modules/app"Vue.use(Vuex)const store = new Vuex.Store({	state: {	},	modules: {		app	},	mutations: {		COMMIT_VALUE: function () {		}	},	getters})export default store

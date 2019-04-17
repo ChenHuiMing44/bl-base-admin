@@ -1,0 +1,1 @@
+export default {	state: {		token: ""	},	getters: {		token: (state) => {			return state.token		}	}}
