@@ -1,82 +1,72 @@
 /* eslint-disable no-empty-label */
 //simple Ajax
 import axios from "axios";
-
+import Utils from "./../utils"
 import {baseUrl, aesSwitch} from "./../config/config";
 import {decrypt,encrypt} from "./aesEncryption";
 import store from "./../store";
 import AJAX_CONFIG from "./../config/ajaxConfig"
+import { Message } from 'element-ui';
 
-
+const ErrorType = AJAX_CONFIG.simpleAjaxErr;
 //除了 0000 以外 其他都是reject 然后 错误类型 和错误信息
 export default function (ajaxParams) {
-	return new Promise( (ajaxResolve , ajaxReject) => {
+	return new Promise( (resolve , reject) => {
 		if(typeof ajaxParams !== "object"){
-			ajaxReject({type: AJAX_CONFIG.simpleAjaxErr.paramsErr});
+			reject({type: ErrorType.paramsErr});
 		}
-		if(typeof ajaxParams.url !== "string"){
-			ajaxReject({type: AJAX_CONFIG.simpleAjaxErr.paramsErr});
+		ajaxParams.url = ajaxParams.url || ajaxParams.urlInfo.url;
+		ajaxParams.method = ajaxParams.method || ajaxParams.urlInfo.method;
+		const {url, method, data, willEnd, noneToast, contentType, timeout} = ajaxParams
+		
+		if(typeof url !== "string"){
+			reject({type: ErrorType.paramsErr});
 		}
-		let url = baseUrl + ajaxParams.url;
-		let method = ajaxParams.method || AJAX_CONFIG.methods.post;
-		let timeout = AJAX_CONFIG.limitTimeout;
-		let data = ajaxParams.data || {};
-		let _contentType = ajaxParams.contentType ||AJAX_CONFIG.contentTypes.www;
 		let token = store.state.token;
-		if(!token){
-			token = localStorage.getItem("token")
-			store.commit("COMMIT_VALUE", {key: "token",value: token});
-		}
-		if(!token){
-			token = "";
-		}
-		console.log("请求参数————"+ ajaxParams.url);
+		console.log("请求参数————"+ url);
 		console.log(JSON.parse(JSON.stringify(data)));
-		if(!data.extend_info){
-			data.extend_info = getBaseInfo();
-		}
-		let cryptData = {
-			encryptContent: encrypt(data)
-		};
-
-		data = CRYPT_SWITCH?cryptData:data;
+		let params = aesSwitch ? {encryptContent: encrypt(data)} : data;
 		let promise = axios({
-			url: url,
-			method,timeout,
+			url: baseUrl + url,
+			method: method || AJAX_CONFIG.methods.get,
+			timeout: timeout || AJAX_CONFIG.limitTimeout,
 			headers: {
-				"Content-type": _contentType,
+				"Content-type": contentType || AJAX_CONFIG.contentTypes.www,
 				"token": token
 			},
-			params: data
+			params: params
 		});
 		Promise.race([promise,new Promise(function (resolve,reject) {
 			setTimeout(function () {
 				reject("timeout");
-			},timeout);
+			}, timeout || AJAX_CONFIG.limitTimeout );
 		})]).then(function (res) {
-			ajaxParams.willEnd && ajaxParams.willEnd(res);
-			if (res.data.retCode === repStatus.success) {
+			willEnd && willEnd(res);
+			if (res.data.retCode === AJAX_CONFIG.retCodes.success) {
 				//请求成功  判断是否加密
-				if(CRYPT_SWITCH) {
+				if(aesSwitch) {
 					let backParams = res.data.ret && decrypt(res.data.ret);
-					res.data.ret = isJson(backParams) ? JSON.parse(backParams) : backParams;
+					res.data.ret = Utils.isJson(backParams) ? JSON.parse(backParams) : backParams;
 				}
-				console.log("——————返回参数——————");
+				console.log("——————返回参数——————" + url);
 				console.log(res.data.ret);
 				res.ret = res.data.ret||{};
-				ajaxResolve(res);
-			}else{
-				ajaxReject({type: AJAX_CONFIG.simpleAjaxErr.businessErr, err: res});
+				resolve(res);
+			}else if(res.date.retCode === AJAX_CONFIG.retCodes.invalid) {
+				//通知token过期
+				store.dispatch("InvalidToken");
+				reject({type: ErrorType.businessErr, err: res})
+			} else {
+				reject({type: ErrorType.businessErr, err: res});
 			}
 		}).catch(function (err) {
-			ajaxParams.willEnd && ajaxParams.willEnd(err);
+			willEnd && willEnd(err);
 			if(err && err.toString().search("timeout") !== -1){
-				!ajaxParams.noneToast && toast("请求超时");
-				ajaxReject({type: AJAX_CONFIG.simpleAjaxErr.timeout});
+				!noneToast && Message("请求超时");
+				reject({type: ErrorType.timeout});
 			} else {
-				ajaxReject({type: AJAX_CONFIG.simpleAjaxErr.other , err: err});
+				reject({type: ErrorType.other , err: err});
 			}
 		})
 	})
 }
-

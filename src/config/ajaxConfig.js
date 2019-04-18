@@ -19,7 +19,12 @@ export default {
 		form: "multipart/form-data"
 	},
 
-	limitTimeout: 15000
+	limitTimeout: 15000,
+
+	retCodes: {
+		success: "0000",
+		invalid: "10002"
+	}
 
 }
 

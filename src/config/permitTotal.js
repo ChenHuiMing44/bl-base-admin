@@ -1,1 +1,0 @@
-/* eslint-disable no-empty-label *///建议大写 当然这个是后段决定 前端需要配置一份export const USER_MANAGER = "USER_MANAGER"export const PERMIT_DISTRIBUTE = "PERMIT_DISTRIBUTE"export const ROLE_DISTRIBUTE = "ROLE_DISTRIBUTE"export const MODULE_MANAGER = "MODULE_MANAGER"export const BUILD_ORDER = "BUILD_ORDER"

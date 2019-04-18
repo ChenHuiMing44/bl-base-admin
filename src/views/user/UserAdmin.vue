@@ -1,0 +1,1 @@
+<template>  <div>user of admin</div></template><script>	export default {		name: "UserAdmin"	}</script><style scoped></style>

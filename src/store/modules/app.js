@@ -1,5 +1,5 @@
 /* eslint-disable no-empty-label,no-mixed-spaces-and-tabs */
-import {themes, fontSize, sideWidth, appName, sideCloseWidth} from "../../config/config"
+import {theme, sideWidth, appName, sideCloseWidth} from "../../config/config"
 
 const app = {
   state: {
@@ -7,8 +7,7 @@ const app = {
       opened: true,
       withoutAnimation: false
     },
-	  theme: themes.navy,
-	  fontSize: fontSize.normal,
+	  theme: theme,
 	  sideWidth,
 	  appName,
 	  sideCloseWidth
