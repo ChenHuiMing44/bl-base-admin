@@ -41,7 +41,12 @@ const app = {
     setSize({ commit }, size) {
       commit('SET_SIZE', size)
     }
-  }
+  },
+	getters: {
+		sidebarOpen: function (state) {
+			return state.sidebar.opened
+		}
+	}
 }
 
 export default app

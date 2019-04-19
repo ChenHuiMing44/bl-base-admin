@@ -1,0 +1,1 @@
+<template>  <div>common2 随便写点什么东西吧</div></template><script>	export default {		name: "common2"	}</script><style scoped></style>
