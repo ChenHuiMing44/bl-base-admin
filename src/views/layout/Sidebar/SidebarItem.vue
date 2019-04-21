@@ -1,22 +1,22 @@
 <template>
   <div v-if="!item.hidden" class="menu-wrapper">
     <template v-if="hasOneShowingChild">
-      <el-menu-item :index="basePath" @click="linkTo">
-        <i class="iconfont side-font" :class="item.meta && item.meta.icon"></i>
-        <span slot="title">{{item.name}}</span>
+      <el-menu-item :index="basePath" @click="linkTo" >
+        <i class="iconfont side-icon" :class="item.meta && item.meta.icon"></i>
+        <span>{{item.name}}</span>
       </el-menu-item>
     </template>
-    <el-submenu v-else ref="subMenu" :index="item.path" popper-append-to-body>
+    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <i class="iconfont side-font" :class="item.meta && item.meta.icon" :title="item.name"></i>
-        <span>{{item.name}}</span>
+        <i class="iconfont side-icon" :class="item.meta && item.meta.icon" :title="item.name"></i>
+        <span slot="title">{{item.name}}</span>
       </template>
       <sidebar-item
         v-for="child in item.children"
         :key="child.path"
         :is-nest="true"
         :item="child"
-        :base-path="basePath +'/'+ child.path"
+        :base-path="resolvePath(child.path)"
         class="nest-menu"
       />
     </el-submenu>
@@ -26,7 +26,7 @@
 
 <script>
 import Item from './Item'
-
+import path from "path"
 
 export default {
   name: 'SidebarItem',
@@ -71,24 +71,21 @@ export default {
       this.$router.replace({
         path: this.basePath
       })
-	  }
+	  },
+    resolvePath(routePath){
+	    return path.resolve(this.basePath, routePath)
+    }
   }
 }
 </script>
 <style scoped>
-  .side-font{
-    width: 30px;
-    height: 100%;
-    text-align: center;
-    float: left;
-  }
   .nest-menu li{
     background-color: #1f2d3d !important;
   }
-  .nest-menu .side-font{
-    width: 15px;
-    /*padding-left: 5px;*/
+  .side-icon{
+    padding-right: 10px;
   }
+
   .nest-menu li:hover{
     background-color: #001528 !important;
   }

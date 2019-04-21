@@ -1,5 +1,5 @@
 /* eslint-disable no-empty-label,no-mixed-spaces-and-tabs */
-import {theme, sideWidth, appName, sideCloseWidth} from "../../config/config"
+import {theme, sideWidth, appName, sideCloseWidth, appTitle} from "../../config/config"
 
 const app = {
   state: {
@@ -10,6 +10,7 @@ const app = {
 	  theme: theme,
 	  sideWidth,
 	  appName,
+    appTitle,
 	  sideCloseWidth
   },
   mutations: {
@@ -45,7 +46,10 @@ const app = {
 	getters: {
 		sidebarOpen: function (state) {
 			return state.sidebar.opened
-		}
+		},
+    appTitle(state) {
+		  return state.appTitle
+    }
 	}
 }
 

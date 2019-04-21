@@ -8,7 +8,6 @@ Vue.use(Router)
 //layout为通配模板页面
 const router = new Router({
   routes: constRoutes
-
 })
 router.beforeEach((to, from, next) => {
 	//切换路由先回判断 vuex里面或者缓存 里面有没有token
@@ -29,12 +28,13 @@ router.beforeEach((to, from, next) => {
 						})
 					})
 			}else {
+        document.title = (to.meta && to.meta.title) ? to.meta.title : store.getters.appTitle;
 				next() //当有用户权限的时候，说明所有可访问路由已生成 如访问没权限的全面会自动进入404页面
 			}
 		}
-
 	} else if(to.path === "/login"){
-		next();
+    document.title = (to.meta && to.meta.title) ? to.meta.title : store.getters.appTitle;
+    next();
 	}else {
 		next({
 			path: '/login'

@@ -6,6 +6,8 @@ import router from './router'
 import store from './store'
 import ElementUI from "element-ui"
 import 'element-ui/lib/theme-chalk/index.css'
+import "./utils/bee.min"
+import "./script/filters"
 import $ajax from "./script/ajax"
 Vue.use(ElementUI)
 Vue.prototype.$ajax = $ajax;
