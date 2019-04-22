@@ -11,7 +11,6 @@ const router = new Router({
 })
 router.beforeEach((to, from, next) => {
 	//切换路由先回判断 vuex里面或者缓存 里面有没有token
-	// debugger
 	if (store.getters.token) { // 判断是否有token
 		if(to.path === "/login"){
 			next("/");

@@ -14,7 +14,6 @@
       <sidebar-item
         v-for="child in item.children"
         :key="child.path"
-        :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
         class="nest-menu"
@@ -25,21 +24,16 @@
 </template>
 
 <script>
-import Item from './Item'
 import path from "path"
 
 export default {
   name: 'SidebarItem',
-  components: { Item },
+  components: { },
   props: {
     // route object
     item: {
       type: Object,
       required: true
-    },
-    isNest: {
-      type: Boolean,
-      default: false
     },
     basePath: {
       type: String,
