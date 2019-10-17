@@ -1,5 +1,11 @@
 /* eslint-disable no-empty-label,no-mixed-spaces-and-tabs */
-import {theme, sideWidth, appName, sideCloseWidth, appTitle} from "../../config/config"
+import {
+  theme,
+  sideWidth,
+  appName,
+  sideCloseWidth,
+  appTitle
+} from '../../config/config'
 
 const app = {
   state: {
@@ -7,14 +13,14 @@ const app = {
       opened: true,
       withoutAnimation: false
     },
-	  theme: theme,
-	  sideWidth,
-	  appName,
+    theme: theme,
+    sideWidth,
+    appName,
     appTitle,
-	  sideCloseWidth
+    sideCloseWidth
   },
   mutations: {
-    TOGGLE_SIDEBAR: state => {
+    TOGGLE_SIDEBAR: (state) => {
       state.sidebar.opened = !state.sidebar.opened
       state.sidebar.withoutAnimation = false
     },
@@ -43,14 +49,14 @@ const app = {
       commit('SET_SIZE', size)
     }
   },
-	getters: {
-		sidebarOpen: function (state) {
-			return state.sidebar.opened
-		},
+  getters: {
+    sidebarOpen: function(state) {
+      return state.sidebar.opened
+    },
     appTitle(state) {
-		  return state.appTitle
+      return state.appTitle
     }
-	}
+  }
 }
 
 export default app

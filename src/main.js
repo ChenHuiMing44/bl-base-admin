@@ -4,16 +4,16 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import ElementUI from "element-ui"
+import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import "./utils/bee.min"
-import "./script/filters"
-import $ajax from "./script/ajax"
+import './utils/bee.min'
+import './script/filters'
+import $ajax from './script/ajax'
 Vue.use(ElementUI)
-Vue.prototype.$ajax = $ajax;
+Vue.prototype.$ajax = $ajax
 //导入样式
-import "./styles/common.css"
-import "./styles/element-reset.css"
+import './styles/common.css'
+import './styles/element-reset.css'
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -22,5 +22,5 @@ new Vue({
   router,
   store,
   components: { App },
-  template: '<App/>',
+  template: '<App/>'
 })
