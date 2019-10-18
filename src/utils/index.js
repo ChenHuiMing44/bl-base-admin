@@ -23,5 +23,16 @@ export default {
   },
   getTimeWithStamp: (stamp) => {
     return new Date(Number(stamp))
+  },
+  tunefulParse: (jsonStr, defaultReturn) => {
+    if (typeof jsonStr === 'string') {
+      try {
+        return JSON.parse(jsonStr)
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log(jsonStr + ' is not a json')
+      }
+    }
+    return defaultReturn || jsonStr
   }
 }

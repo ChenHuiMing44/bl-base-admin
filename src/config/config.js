@@ -1,5 +1,6 @@
 /* eslint-disable no-empty-label */
-import { Themes, StorageList } from './enums'
+import { Themes, StorageList, XhrRespondeCode } from './enums'
+import { XhrMethods, XhrContentTypes } from './enums'
 
 /**
  * @2019/4/17
@@ -31,8 +32,16 @@ export const appName = '管理系统'
 
 export const appTitle = '管理系统'
 
-export const baseUrl = 'localhost:8780'
+// export const baseUrl = 'localhost:8780'
 
-export const mockUrl = 'http://0.0.0.0:3002/'
+export const mockUrl = 'http://0.0.0.0:3002/api/'
 
 export const userCache = StorageList.local
+
+export const defaultMethods = XhrMethods.get
+
+export const xhrLimitTimeout = 10000
+
+export const successResCode = XhrRespondeCode.success
+
+export const xhrDefaultType = XhrContentTypes.json

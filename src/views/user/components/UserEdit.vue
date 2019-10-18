@@ -1,13 +1,11 @@
 <template>
-  <>
+  <div></div>
 </template>
 
 <script>
-    export default {
-        name: "UserEdit"
-    }
+export default {
+  name: 'UserEdit'
+}
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

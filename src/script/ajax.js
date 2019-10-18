@@ -1,87 +1,81 @@
-/* eslint-disable no-empty-label */
-//simple Ajax
+/**
+ * @2019-07-22
+ * @author: huimingchen
+ * desc: 全军请求接口，我还是觉得 ajax 好听一点
+ */
 import axios from 'axios'
-import Utils from './../utils'
-import { baseUrl, aesSwitch } from './../config/config'
-import { decrypt, encrypt } from './aesEncryption'
-import store from './../store'
-import AJAX_CONFIG from './../config/ajaxConfig'
-import { Message } from 'element-ui'
+import {
+  // TEST_URL,
+  xhrDefaultType,
+  aesSwitch,
+  mockUrl,
+  defaultMethods,
+  xhrLimitTimeout,
+  successResCode
+} from '../config/config'
+import { encrypt } from './aesEncryption'
+import Env from './../utils/env'
+/**
+ * @2019-07-22
+ * @author: huimingchen
+ * desc: 第一个是api
+ */
 
-const ErrorType = AJAX_CONFIG.simpleAjaxErr
-//除了 0000 以外 其他都是reject 然后 错误类型 和错误信息
-export default function(ajaxParams) {
-  return new Promise((resolve, reject) => {
-    if (typeof ajaxParams !== 'object') {
-      reject({ type: ErrorType.paramsErr })
-    }
-    ajaxParams.url = ajaxParams.url || ajaxParams.urlInfo.url
-    ajaxParams.method = ajaxParams.method || ajaxParams.urlInfo.method
-    const {
-      url,
-      method,
-      data,
-      willEnd,
-      noneToast,
-      contentType,
-      timeout
-    } = ajaxParams
-
-    if (typeof url !== 'string') {
-      reject({ type: ErrorType.paramsErr })
-    }
-    let token = store.state.token
-    console.log('请求参数————' + url)
-    console.log(JSON.parse(JSON.stringify(data)))
-    let params = aesSwitch ? { encryptContent: encrypt(data) } : data
-    let promise = axios({
-      url: baseUrl + url,
-      method: method || AJAX_CONFIG.methods.get,
-      timeout: timeout || AJAX_CONFIG.limitTimeout,
-      headers: {
-        'Content-type': contentType || AJAX_CONFIG.contentTypes.www,
-        token: token
-      },
-      params: params
-    })
+export default (params) =>
+  new Promise((resolve, reject) => {
+    let timeout = params.timeout || xhrLimitTimeout
     Promise.race([
-      promise,
-      new Promise(function(resolve, reject) {
-        setTimeout(function() {
-          reject('timeout')
-        }, timeout || AJAX_CONFIG.limitTimeout)
+      axios({
+        url: params.url,
+        method: params.method || defaultMethods,
+        params: params.data,
+        headers: {
+          'Content-type': params.contentType || xhrDefaultType,
+          token: params.token
+        }
+      }),
+      new Promise((resolve1, reject1) => {
+        setTimeout(() => {
+          reject1('timeout')
+        }, timeout)
       })
     ])
-      .then(function(res) {
-        willEnd && willEnd(res)
-        if (res.data.retCode === AJAX_CONFIG.retCodes.success) {
-          //请求成功  判断是否加密
-          if (aesSwitch) {
-            let backParams = res.data.ret && decrypt(res.data.ret)
-            res.data.ret = Utils.isJson(backParams)
-              ? JSON.parse(backParams)
-              : backParams
-          }
-          console.log('——————返回参数——————' + url)
-          console.log(res.data.ret)
-          res.ret = res.data.ret || {}
-          resolve(res)
-        } else if (res.date.retCode === AJAX_CONFIG.retCodes.invalid) {
-          //通知token过期
-          store.dispatch('InvalidToken')
-          reject({ type: ErrorType.businessErr, err: res })
+      .then((res) => {
+        typeof params.willEnd === 'function' && params.willEnd(res.data)
+        //这个地方判断其code的正确性
+        !res.data && (res.data = {})
+        if (res.data.retCode === successResCode) {
+          //如果需要携带message信息，则将返回对象直接出去，否则抛出去的是其data属性
+          resolve(params.withMessage ? res.data : res.data.ret)
         } else {
-          reject({ type: ErrorType.businessErr, err: res })
+          reject({
+            errMsg: res.data.retMsg || '呀，系统开了点小差',
+            errCode: res.data.retCode,
+            errData: res.data.ret,
+            err: res
+            // errType:  暂时不定义
+          })
         }
       })
-      .catch(function(err) {
-        willEnd && willEnd(err)
-        if (err && err.toString().search('timeout') !== -1) {
-          !noneToast && Message('请求超时')
-          reject({ type: ErrorType.timeout })
-        } else {
-          reject({ type: ErrorType.other, err: err })
-        }
+      .catch((err) => {
+        typeof params.willEnd === 'function' && params.willEnd(err)
+        const errMsg = err === 'timeout' ? '请求超时' : '呀，系统开了点小差'
+        reject({ err, errMsg })
       })
   })
-}
+
+axios.interceptors.request.use((config) => {
+  if (Env.isMock()) {
+    config.baseURL = mockUrl
+  } else if (Env.isDev()) {
+    config.baseURL = '/api'
+  } else {
+    config.baseURL = '/api'
+  }
+  // config.baseURL = TEST_URL
+  //如果开启了加解密
+  if (aesSwitch) {
+    config.params = encrypt(config.params)
+  }
+  return config
+})

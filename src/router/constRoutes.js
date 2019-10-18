@@ -1,8 +1,8 @@
 /* eslint-disable no-empty-label */
 import Layout from '@/views/layout/Layout'
-import Error404 from "@/views/error/404"
-import Login from "@/views/login/Login"
-import Welcome from "@/views/welcome/Welcome"
+import Error404 from '@/views/error/404'
+import Login from '@/views/login/Login'
+import Welcome from '@/views/welcome/Welcome'
 /**
  * @2019/4/18
  * @author: huiming
@@ -20,55 +20,71 @@ import Welcome from "@/views/welcome/Welcome"
  */
 
 export default [
-	{
-		//模板页面 建议不用动
-		path: "/",
-		component: Layout,
-		hidden: true,
-		name: "首页",
-    redirect: "/index",
-		meta: {
-			title: "贝连管理系统"
-		},
+  {
+    //模板页面 建议不用动
+    path: '/',
+    component: Layout,
+    hidden: true,
+    name: '首页',
+    redirect: '/index',
+    meta: {
+      title: '贝连管理系统'
+    },
     children: [
       {
-        path: "index",
+        path: 'index',
         component: Welcome,
-        name: "Welcome",
+        name: 'Welcome',
         meta: {
           fixTag: true
         }
       }
     ]
-	},
-	// {      //有的时候需要一来重定向到一个特定的页面 这个时候删除上面那个 使用 这个
-	// 	path: "/",
-	// 	component: Layout,
-	// 	redirect: 'index',
-	// 	children: [
-	// 		{
-	// 			path: "index",
-	// 			component: "XXX",
-	// 			name: "XXX"
-	// 		}
-	// 	]
-	// },
-	{
-		path: "/login",
-		name: "Login",
-		component: Login,
-		hidden: true,
-		meta: {
-			title: "登录"
-		}
-	},
-
-	{
-		path: "/404",
-		component: Error404,
-		hidden: true,
-		meta: {
-			title: "404错误"
-		}
-	}
+  },
+  // {      //有的时候需要一来重定向到一个特定的页面 这个时候删除上面那个 使用 这个
+  // 	path: "/",
+  // 	component: Layout,
+  // 	redirect: 'index',
+  // 	children: [
+  // 		{
+  // 			path: "index",
+  // 			component: "XXX",
+  // 			name: "XXX"
+  // 		}
+  // 	]
+  // },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    hidden: true,
+    meta: {
+      title: '登录'
+    }
+  },
+  {
+    path: '/404',
+    component: Error404,
+    hidden: true,
+    meta: {
+      title: '404错误'
+    }
+  },
+  {
+    path: '/error',
+    component: Layout,
+    hidden: true,
+    meta: {
+      title: '401错误',
+      icon: '401'
+    },
+    children: [
+      {
+        path: '401',
+        component: Error404,
+        name: 'Page401',
+        meta: { title: 'page401', noCache: true }
+      }
+    ]
+  }
 ]

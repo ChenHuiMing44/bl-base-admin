@@ -1,8 +1,7 @@
 /* eslint-disable no-empty-label */
-import router from './../../router'
+// import router from './../../router'
 import { getToken } from '../../utils/auth'
-import ajax from './../../script/ajax'
-import { GetUserInfo } from '../../config/requireUrls'
+import ApiUser from './../../apis/user'
 
 export default {
   state: {
@@ -45,35 +44,58 @@ export default {
       store.getters.storage.setItem('token', token)
       store.commit('SET_TOKEN', token)
     },
-    RequireUserInfo({ commit, getters }) {
-      // return new Promise((resolve, reject) => {
-      // 	ajax({urlInfo: GetUserInfo}).then(res => {
-      // 		if (res.ret.roles && res.ret.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-      // 			commit('SET_ROLES', res.ret.roles)
-      // 		} else {
-      // 			reject('getInfo: roles must be a non-null array!')
-      // 		}
-      // 		commit('SET_NAME', res.ret.name)
-      // 		commit('SET_AVATAR', res.ret.avatar)
-      // 		resolve(res.ret);
-      // 	}).catch(err => {
-      // 		reject(err)
-      // 	})
-      // })
-      //模拟
+    // RequireUserInfo({ commit, getters }) {
+    //   // return new Promise((resolve, reject) => {
+    //   // 	ajax({urlInfo: GetUserInfo}).then(res => {
+    //   // 		if (res.ret.roles && res.ret.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+    //   // 			commit('SET_ROLES', res.ret.roles)
+    //   // 		} else {
+    //   // 			reject('getInfo: roles must be a non-null array!')
+    //   // 		}
+    //   // 		commit('SET_NAME', res.ret.name)
+    //   // 		commit('SET_AVATAR', res.ret.avatar)
+    //   // 		resolve(res.ret);
+    //   // 	}).catch(err => {
+    //   // 		reject(err)
+    //   // 	})
+    //   // })
+    //   //模拟
+    //   return new Promise((resolve) => {
+    //     let role = getters.token === 'admin' ? 'ADMIN' : 'EDITOR'
+    //     setTimeout(() => {
+    //       commit('SET_NAME', '陈惠敏')
+    //       commit('SET_AVATAR', '')
+    //       commit('SET_ROLES', [role])
+    //       resolve({
+    //         name: '陈惠敏',
+    //         roles: [role],
+    //         avatar: ''
+    //       })
+    //     }, 500)
+    //   })
+    // },
+    RequireUserInfo: function({ commit }) {
       return new Promise((resolve) => {
-        let role = getters.token === 'admin' ? 'ADMIN' : 'EDITOR'
-        setTimeout(() => {
-          commit('SET_NAME', '陈惠敏')
-          commit('SET_AVATAR', '')
-          commit('SET_ROLES', [role])
-          resolve({
-            name: '陈惠敏',
-            roles: [role],
-            avatar: ''
+        ApiUser.routes().then((res) => {
+          //设置 avatar  username  ...arg
+          commit('SET_NAME', res.userInfo && res.userInfo.name)
+          commit('SET_AVATAR', res.userInfo && res.userInfo.avatar)
+          let roles = []
+          if (res.role && res.role.val) {
+            // typeof res.role.val === 'string' && (roles = [res.role.val])
+            // (res.role.val instanceof Array) && (roles = res.role.val)
+            if (typeof res.role.val === 'string') {
+              roles = [res.role.val]
+            } else if (res.role.val instanceof Array) {
+              roles = res.role.val
+            }
+          }
+          setTimeout(() => {
+            commit('SET_ROLES', roles)
           })
+          resolve(res)
         })
-      }, 500)
+      })
     },
 
     /**

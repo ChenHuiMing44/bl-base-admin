@@ -9,7 +9,8 @@
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "mock": "nodemon --watch api-interface node api-interface/app.js"
+    "mock": "nodemon --watch api-interface node api-interface/app.js",
+    "testing": "cross-env env_name=testing node build/build.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -36,6 +37,7 @@
     "babel-preset-stage-2": "^6.22.0",
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^6.0.3",
     "css-loader": "^0.28.0",
     "eslint": "^4.15.0",
     "eslint-config-standard": "^10.2.1",
