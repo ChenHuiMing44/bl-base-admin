@@ -45,7 +45,7 @@ export const XhrMethods = {
 }
 
 export const XhrRespondeCode = {
-  success: '0000'
+  success: 0
 }
 
 export const XhrContentTypes = {

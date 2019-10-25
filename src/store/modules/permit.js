@@ -3,42 +3,72 @@
 // import asyncRoutes from './../../router/asyncRouterMap'
 import constRoutes from './../../router/constRoutes'
 import componentList from './../../config/componentList'
-import Layout from './../../views/layout/Layout'
 import Utils from './../../utils'
+import EmptyPage from './../../views/common/emptyPage'
 
+// const Layout = () => import('./../../views/layout/Layout')
 //根据后台返回的page component key
 function getAsyncComponent(pageComp) {
   const componentPath = componentList[pageComp]
   if (!componentPath) {
-    return Layout
+    return EmptyPage
   }
-  // return Layout
   return view(componentPath)
 }
 
-function handleRoute(originRoute) {
-  let tmp = { ...originRoute }
-  if (tmp.component) {
-    //添加name属性
-    tmp.name = tmp.component
-    tmp.component = getAsyncComponent(tmp.component)
-  }
+const trees = {
+  menu: 0,
+  permit: 1,
+  page: 2
+}
 
-  tmp.meta = Utils.tunefulParse(tmp.meta)
-  //实际后台返回的 route权限在 第一层
-  return tmp
+function handleRoute(originRoute) {
+  let tmp = {}
+  tmp.meta = Utils.tunefulParse(originRoute.root.metaInfo, {})
+  tmp.meta.menuId = originRoute.root.menuId
+  if (originRoute.root.type === trees.permit) {
+    tmp.permissions = originRoute.root
+  } else {
+    if (originRoute.root.component) {
+      tmp.name = 'page' + originRoute.root.menuId
+      tmp.component = getAsyncComponent(originRoute.root.component)
+    }
+    tmp.path = originRoute.root.path
+    tmp.menuName = originRoute.root.menuName
+    tmp.meta.inMenu = originRoute.root.type === trees.menu
+  }
+  return {
+    ...tmp,
+    children: originRoute.children,
+    isPage: originRoute.root.type !== trees.permit
+  }
 }
 
 function filterRoutes(routes) {
   const asyncRoutes = []
+  const asyncPermissions = []
   routes.forEach((route) => {
     const tmp = handleRoute(route)
-    if (tmp.children) {
-      tmp.children = filterRoutes(tmp.children)
+    if (tmp.children && tmp.children.length) {
+      const child = filterRoutes(tmp.children)
+      if (child.isPage) {
+        tmp.children = child.routes
+      } else {
+        tmp.meta.permissions = child.permissions
+        delete tmp.children
+      }
     }
-    asyncRoutes.push(tmp)
+    if (tmp.isPage) {
+      asyncRoutes.push(tmp)
+    } else {
+      asyncPermissions.push(tmp.permissions)
+    }
   })
-  return asyncRoutes
+  return {
+    routes: asyncRoutes,
+    permissions: asyncPermissions,
+    isPage: !asyncPermissions.length
+  }
 }
 function view(path) {
   return function(resolve) {
@@ -73,14 +103,14 @@ export default {
     }
   },
   getters: {
-    permissionRoutes: (state) => state.routes,
+    userTree: (state) => state.routes || [],
     hasSettingRoutes: (state) => state.hasSetting
   },
   actions: {
     InitRoutes({ commit }, originRoutes) {
       return new Promise((resolve) => {
-        let accessedRoutes = filterRoutes(originRoutes)
-
+        const accessedRoutes = filterRoutes(originRoutes).routes
+        console.log(accessedRoutes.length)
         commit('SET_ROUTES', accessedRoutes)
         commit('SET_SETTING', true)
         resolve(accessedRoutes)

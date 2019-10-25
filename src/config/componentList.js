@@ -3,7 +3,8 @@ export default {
   Layout: 'layout/Layout',
   User: 'user/User',
   UserAdmin: 'user/UserAdmin',
-  Admin: 'admin/index',
-  Common1: 'common/Common1',
-  Common2: 'common/Common2'
+  Menu: 'system/menu/index',
+  EmptyPage: 'common/emptyPage',
+  PageEdit: 'system/pageEdit/index',
+  Role: 'role/roleManager'
 }

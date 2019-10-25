@@ -1,1 +1,0 @@
-<template>  <div>common1 的页面欢迎到来</div></template><script>	export default {		name: "common1"	}</script><style scoped></style>

@@ -34,6 +34,8 @@ export const appTitle = '管理系统'
 
 // export const baseUrl = 'localhost:8780'
 
+export const baseUrl = 'http://192.168.1.24:7004/'
+
 export const mockUrl = 'http://0.0.0.0:3002/api/'
 
 export const userCache = StorageList.local

@@ -1,7 +1,8 @@
 /* eslint-disable no-empty-label */
 // import router from './../../router'
 import { getToken } from '../../utils/auth'
-import ApiUser from './../../apis/user'
+import ApiMenu from './../../apis/menu'
+import { Message as $message } from 'element-ui'
 
 export default {
   state: {
@@ -75,26 +76,31 @@ export default {
     //   })
     // },
     RequireUserInfo: function({ commit }) {
-      return new Promise((resolve) => {
-        ApiUser.routes().then((res) => {
-          //设置 avatar  username  ...arg
-          commit('SET_NAME', res.userInfo && res.userInfo.name)
-          commit('SET_AVATAR', res.userInfo && res.userInfo.avatar)
-          let roles = []
-          if (res.role && res.role.val) {
-            // typeof res.role.val === 'string' && (roles = [res.role.val])
-            // (res.role.val instanceof Array) && (roles = res.role.val)
-            if (typeof res.role.val === 'string') {
-              roles = [res.role.val]
-            } else if (res.role.val instanceof Array) {
-              roles = res.role.val
+      return new Promise((resolve, reject) => {
+        ApiMenu.userMenu()
+          .then((res) => {
+            //设置 avatar  username  ...arg
+            commit('SET_NAME', res.userInfo && res.userInfo.name)
+            commit('SET_AVATAR', res.userInfo && res.userInfo.avatar)
+            let roles = []
+            if (res.role && res.role.val) {
+              // typeof res.role.val === 'string' && (roles = [res.role.val])
+              // (res.role.val instanceof Array) && (roles = res.role.val)
+              if (typeof res.role.val === 'string') {
+                roles = [res.role.val]
+              } else if (res.role.val instanceof Array) {
+                roles = res.role.val
+              }
             }
-          }
-          setTimeout(() => {
-            commit('SET_ROLES', roles)
+            setTimeout(() => {
+              commit('SET_ROLES', roles)
+            })
+            resolve(res)
           })
-          resolve(res)
-        })
+          .catch((err) => {
+            err.errMsg && $message.error(err.errMsg)
+            reject(err)
+          })
       })
     },
 
@@ -108,7 +114,6 @@ export default {
       //token过期 清除用户信息进入 login
       store.commit('SET_TOKEN', '')
       store.getters.storage.removeItem('token')
-      // router.replace("/login");
       location.reload()
     }
   }

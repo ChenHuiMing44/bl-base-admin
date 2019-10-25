@@ -1,19 +1,39 @@
 'use strict'
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
+const devEnv = require('../config/dev.env')
 
 const path = require('path')
+const devPath = 'http://192.168.1.24:7004/'
+const yapiPath = 'http://112.124.128.200:8093/mock/17/'
+const mockPath = 'http://0.0.0.0:3002/api'
 
+let targetPath = devPath
+
+devEnv.MOCK && (targetPath = mockPath)
+
+devEnv.YAPI && (targetPath = yapiPath)
+
+console.log(targetPath)
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api/**': {
+        //代理地址
+        target: targetPath, //需要代理的地址
+        changeOrigin: true, //是否跨域
+        secure: false,
+        pathRewrite: {
+          '^/api': '/' //本身的接口地址没有 '/api' 这种通用前缀，所以要rewrite，如果本身有则去掉
+        }
+      }
+    },
 
     // Various Dev Server settings
-    host: "0.0.0.0", // can be overwritten by process.env.HOST
+    host: '0.0.0.0', // can be overwritten by process.env.HOST
     port: 8780, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,

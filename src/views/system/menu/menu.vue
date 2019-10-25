@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination/index'
+import Pagination from './../../../components/Pagination/index'
 
 export default {
   name: 'User',

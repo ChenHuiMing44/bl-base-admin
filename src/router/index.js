@@ -17,14 +17,28 @@ router.beforeEach((to, from, next) => {
       next('/')
     } else {
       //判断用户是否已经加载过权限
-      if (store.getters.roles.length === 0) {
-        store.dispatch('RequireUserInfo').then((res) => {
-          const originRoutes = res.routes || []
-          store.dispatch('InitRoutes', originRoutes).then((accessedRoutes) => {
-            router.addRoutes(accessedRoutes)
-            next({ ...to, replace: true })
+      if (!store.getters.hasSettingRoutes) {
+        store
+          .dispatch('RequireUserInfo')
+          .then((res) => {
+            console.log(res)
+            const originRoutes = res.result || []
+            store
+              .dispatch('InitRoutes', originRoutes)
+              .then((accessedRoutes) => {
+                console.log(accessedRoutes)
+                // debugger
+                console.log(router)
+                // router.addRoutes(accessedRoutes)
+                router.addRoutes(accessedRoutes)
+                console.log(router)
+                next({ ...to, replace: true })
+              })
           })
-        })
+          .catch(() => {
+            store.dispatch('InvalidToken')
+            next({ path: '/' })
+          })
       } else {
         document.title =
           to.meta && to.meta.title ? to.meta.title : store.getters.appTitle
@@ -41,5 +55,16 @@ router.beforeEach((to, from, next) => {
     }) // 否则全部重定向到登录页
   }
 })
+
+function go(to, next) {
+  console.log(accessedRoutes)
+  // debugger
+  console.log(router)
+  // router.addRoutes(accessedRoutes)
+
+  router.addRoutes(accessedRoutes)
+  console.log(router)
+  // next({ ...to, replace: true })
+}
 
 export default router

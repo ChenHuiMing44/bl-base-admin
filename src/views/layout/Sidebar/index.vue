@@ -39,7 +39,7 @@ export default {
       return this.$store.state.app.sideWidth
     },
     permissionRoutes: function() {
-      return this.$store.getters.permissionRoutes
+      return this.$store.getters.userTree
     },
     activeMenu() {
       const route = this.$route

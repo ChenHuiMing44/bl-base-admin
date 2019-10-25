@@ -7,20 +7,22 @@
         class="demo-form-inline"
         size="small"
       >
-        <el-form-item label="用户名">
-          <el-input v-model="listQuery.user" placeholder="用户名"></el-input>
+        <el-form-item label="组件名">
+          <el-input v-model="listQuery.user" placeholder="组件名"></el-input>
         </el-form-item>
-        <el-form-item label="渠道号">
+        <el-form-item label="路由">
           <el-autocomplete
             v-model="listQuery.channelNo"
-            placeholder="渠道号"
+            placeholder="路由"
             :fetch-suggestions="querySearch"
           ></el-autocomplete>
         </el-form-item>
-        <el-form-item label="活动区域">
-          <el-select v-model="listQuery.region" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="类型">
+          <el-select v-model="listQuery.region" placeholder="类型">
+            <el-option label="全部" value="" />
+            <el-option label="菜单" value="0"></el-option>
+            <el-option label="页面" value="1"></el-option>
+            <el-option label="权限" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item label="创建时间">
@@ -65,15 +67,16 @@
           {{ (listQuery.page - 1) * listQuery.pageSize + $index + 1 }}
         </template>
       </el-table-column>
-      <el-table-column label="用户号?" align="center">
+      <el-table-column label="组件名" align="center">
         <template slot-scope="{ row }">{{ row.id }}</template>
       </el-table-column>
-      <el-table-column
-        prop="name"
-        label="用户名"
-        align="center"
-        sortable="custom"
-      />
+      <el-table-column prop="name" label="路由" align="center" />
+      <el-table-column label="类型" align="center">
+        <template slot-scope="{ row }">{{ row.type | typeFilters }}</template>
+      </el-table-column>
+      <el-table-column label="meta信息" align="center">
+        <template slot-scope="{ row }">{{ row.remark }}</template>
+      </el-table-column>
       <el-table-column
         label="时间"
         align="center"
@@ -84,9 +87,6 @@
           ><i class="el-icon-time" style="margin-right: 5px"></i
           >{{ row.time | dateFormat }}</template
         >
-      </el-table-column>
-      <el-table-column label="备注" align="center">
-        <template slot-scope="{ row }">{{ row.remark }}</template>
       </el-table-column>
       <el-table-column label="状态" align="center">
         <template slot-scope="{ row }">
@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination/index'
+import Pagination from './../../../components/Pagination/index'
 
 export default {
   name: 'User',
@@ -190,6 +190,16 @@ export default {
       dialogTmp: ''
     }
   },
+  filters: {
+    typeFilters(val) {
+      if (val === 0) {
+        return '菜单'
+      } else if (val === 1) {
+        return '权限'
+      }
+      return '页面'
+    }
+  },
   computed: {
     //这个值是add时的初始化数据
     dialogAdd: () => ({ name: '', time: new Date(), remark: '', status: true })
@@ -205,15 +215,17 @@ export default {
       this.list = [
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
           time: '1832445543556',
           name: '王老五',
+          type: 1,
           remark: 'sdffdsgsgfdhfgnhg',
           status: true
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
+          type: 1,
           time: '1432454453556',
           name: '王老五',
           remark: 'sdffdsgsgfdhfgnhg',
@@ -221,7 +233,8 @@ export default {
         },
         {
           serial: 12,
-          id: '23214324',
+          type: 1,
+          id: 'Layout',
           time: '1342543556',
           name: '王老五',
           remark: 'sdffdsgsgfdhfgnhg',
@@ -229,7 +242,9 @@ export default {
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
+          type: 2,
+
           time: '1423234543556',
           name: '王老五',
           remark: 'sdffdsgsgfdhfgnhg',
@@ -237,23 +252,25 @@ export default {
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
           time: '13452243556',
           name: '王老五',
+          type: 0,
           remark: 'sdffdsgsgfdhfgnhg',
           status: true
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
           time: '1345422122556',
           name: '王老五',
+          type: 0,
           remark: 'sdffdsgsgfdhfgnhg',
           status: false
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
           time: '1213454213556',
           name: '王老五',
           remark: 'sdffdsgsgfdhfgnhg',
@@ -261,7 +278,7 @@ export default {
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
           time: '1343242543556',
           name: '王老五',
           remark: 'sdffdsgsgfdhfgnhg',
@@ -269,7 +286,7 @@ export default {
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
           time: '1933445432556',
           name: '王老五',
           remark: 'sdffdsgsgfdhfgnhg',
@@ -277,7 +294,7 @@ export default {
         },
         {
           serial: 12,
-          id: '23214324',
+          id: 'Layout',
           time: '134345435526',
           name: '王老五',
           remark: 'sdffdsgsgfdhfgnhg',
@@ -302,7 +319,7 @@ export default {
       this.showDialog = true
     },
     //点击编辑
-    handleEdit(row, index) {
+    handleEdit(row) {
       let tmp = Object.assign({}, row)
       // debugger
       //因为后台传的时间可能是时间戳 时间显示的格式  但是在这里统统要转成date  可以写两个方法用链式法则调用看着简单点
