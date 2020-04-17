@@ -1,26 +1,26 @@
 /* eslint-disable no-empty-label */
 //simple Ajax
-import axios from "axios";
+import axios from "axios"
 import Utils from "./../utils"
-import {baseUrl, aesSwitch} from "./../config/config";
-import {decrypt,encrypt} from "./aesEncryption";
-import store from "./../store";
+import {baseUrl, aesSwitch} from "./../config/config"
+import {decrypt,encrypt} from "./aesEncryption"
+import store from "./../store"
 import AJAX_CONFIG from "./../config/ajaxConfig"
-import { Message } from 'element-ui';
+import { Message } from 'element-ui'
+
 
 const ErrorType = AJAX_CONFIG.simpleAjaxErr;
 //除了 0000 以外 其他都是reject 然后 错误类型 和错误信息
 export default function (ajaxParams) {
-	return new Promise( (resolve , reject) => {
+	return new Promise( (resolve, reject) => {
 		if(typeof ajaxParams !== "object"){
-			reject({type: ErrorType.paramsErr});
+			reject({type: ErrorType.paramsErr})
 		}
 		ajaxParams.url = ajaxParams.url || ajaxParams.urlInfo.url;
 		ajaxParams.method = ajaxParams.method || ajaxParams.urlInfo.method;
 		const {url, method, data, willEnd, noneToast, contentType, timeout} = ajaxParams
-		
 		if(typeof url !== "string"){
-			reject({type: ErrorType.paramsErr});
+      reject({type: ErrorType.paramsErr})
 		}
 		let token = store.state.token;
 		console.log("请求参数————"+ url);
@@ -31,6 +31,7 @@ export default function (ajaxParams) {
 			method: method || AJAX_CONFIG.methods.get,
 			timeout: timeout || AJAX_CONFIG.limitTimeout,
 			headers: {
+
 				"Content-type": contentType || AJAX_CONFIG.contentTypes.www,
 				"token": token
 			},
